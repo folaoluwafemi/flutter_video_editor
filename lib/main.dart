@@ -1,9 +1,14 @@
-import 'package:flutter/cupertino.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_video_editor/presentation/paint_screen.dart';
+import 'package:flutter_video_editor/features/cloud_storage_feature/presentation/cloud_storage_screen.dart';
+import 'package:flutter_video_editor/config/app_router.dart';
 
-void main() {
+import 'firebase_options.dart';
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(const PaintApp());
 }
 
@@ -15,26 +20,11 @@ class PaintApp extends StatelessWidget {
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light.copyWith(
       statusBarColor: Colors.transparent,
       statusBarIconBrightness: Brightness.light,
-
     ));
 
-    return MaterialApp(
-      initialRoute: PaintDrawer.id,
-      onGenerateRoute: (settings) {
-        if (settings.name == PaintDrawer.id) {
-          return MaterialPageRoute(builder: (context) => const PaintDrawer());
-        } else {
-          return MaterialPageRoute(
-            builder: (context) => const SafeArea(
-              child: Scaffold(
-                body: Center(
-                  child: Text('you navigated to the wrong route'),
-                ),
-              ),
-            ),
-          );
-        }
-      },
+    return const MaterialApp(
+      initialRoute: VideosListScreen.id,
+      onGenerateRoute: AppRouter.router,
     );
   }
 }

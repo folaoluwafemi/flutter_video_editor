@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "258023647564",
+    "project_id": "video-editor-6a0f4",
+    "storage_bucket": "video-editor-6a0f4.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:258023647564:android:3549a6a4a4dc5275a707e9",
+        "android_client_info": {
+          "package_name": "com.popestrings.flutter_video_editor"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "258023647564-p8l016giap2ejdha30sk58ja0klvcvbv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBB2kDRFTGVSZlSLzgQyelDtALOLPdZyrs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "258023647564-p8l016giap2ejdha30sk58ja0klvcvbv.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
