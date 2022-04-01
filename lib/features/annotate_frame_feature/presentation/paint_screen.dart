@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_painter/flutter_painter.dart';
+import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:screenshot/screenshot.dart';
 
 const String backGroundImage = 'assets/image/phone_background.jpg';
@@ -17,26 +18,9 @@ class PaintDrawer extends StatefulWidget {
 }
 
 class _PaintDrawerState extends State<PaintDrawer> {
-  // Directory? localDir;
-  // File? imageFileLocation;
-  // Directory? imageDirectory;
-
-  // dynamic initLocalDir() async {
-  //   localDir = (await path_provider.getApplicationDocumentsDirectory());
-  //   imageDirectory = Directory('${localDir!.path}/');
-  //   imageFileLocation = File('${localDir!.path}/');
-  //
-  //   await imageFileLocation!.create();
-  // }
-
   late PainterController painterController;
   ScreenshotController screenshotController = ScreenshotController();
   FocusNode textFocusNode = FocusNode();
-  Paint shapePaint = Paint()
-    ..color = Colors.white
-    ..style = PaintingStyle.stroke
-    ..strokeWidth = 2
-    ..strokeCap = StrokeCap.round;
 
   @override
   void initState() {
@@ -68,21 +52,63 @@ class _PaintDrawerState extends State<PaintDrawer> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: Stack(
-        children: [
-          Container(
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                image: MemoryImage(widget.image),
+    return SafeArea(
+      child: Scaffold(
+        appBar: AppBar(
+          actions: [
+            IconButton(
+              onPressed: () {
+                painterController.clearDrawables();
+              },
+              icon: const Icon(Icons.cancel_outlined),
+            ),
+            IconButton(
+              onPressed: painterController.canUndo
+                  ? () => painterController.undo()
+                  : null,
+              icon: const Icon(Icons.undo),
+            ),
+            IconButton(
+              onPressed: () => painterController.redo(),
+              icon: const Icon(Icons.redo),
+            ),
+            IconButton(
+              onPressed: () async {
+                await screenshotController
+                    .capture(delay: const Duration(milliseconds: 300))
+                    .then((value) {
+                  if (value != null) {
+                    ImageGallerySaver.saveImage(value);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                          content: Text('Image has been saved successfully')),
+                    );
+                  }
+                });
+              },
+              icon: const Icon(Icons.save),
+            )
+          ],
+        ),
+        backgroundColor: Theme.of(context).backgroundColor,
+        body: Screenshot(
+          controller: screenshotController,
+          child: Stack(
+            children: [
+              Container(
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image: MemoryImage(widget.image),
+                  ),
+                  color: Colors.transparent,
+                ),
+                child: FlutterPainter(
+                  controller: painterController,
+                ),
               ),
-              color: Colors.transparent,
-            ),
-            child: FlutterPainter(
-              controller: painterController,
-            ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }

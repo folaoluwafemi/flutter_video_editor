@@ -34,7 +34,7 @@ class VideoStreamCubit extends Cubit<VideoStreamState> {
   VideoPlayerController initializeController({required VideoModel video}) {
     VideoPlayerController controller = VideoPlayerController.network(
       video.videoURL,
-    );
+    )..setLooping(true);
     controller.initialize();
     controller.setVolume(1.0);
 
@@ -42,15 +42,9 @@ class VideoStreamCubit extends Cubit<VideoStreamState> {
     return controller;
   }
 
-
-  void setPosition(double position){
-    emit(VideoPlayingState(position: position));
-  }
-
   double getCurrentPosition(VideoPlayerController videoController) {
     var newPosition = videoController.value.position.inSeconds /
         videoController.value.duration.inSeconds;
-    emit(VideoPlayingState(position: newPosition));
     return newPosition;
   }
 
@@ -58,11 +52,6 @@ class VideoStreamCubit extends Cubit<VideoStreamState> {
     double position = getCurrentPosition(controller);
 
     emit(VideoPausedState(position: position));
-  }
-
-  void jumpTo(VideoPlayerController controller) {
-    double position = getCurrentPosition(controller);
-    emit(VideoPlayingState(position: position));
   }
 
   void play(VideoPlayerController controller) {
