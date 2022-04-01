@@ -63,13 +63,22 @@ class _PaintDrawerState extends State<PaintDrawer> {
               icon: const Icon(Icons.cancel_outlined),
             ),
             IconButton(
-              onPressed: painterController.canUndo
-                  ? () => painterController.undo()
-                  : null,
+              onPressed: () {
+                setState(() {});
+                if (painterController.canUndo) {
+                  return painterController.undo();
+                }
+              },
               icon: const Icon(Icons.undo),
             ),
             IconButton(
-              onPressed: () => painterController.redo(),
+              onPressed: () {
+                if (painterController.canUndo) {
+                  setState(() {
+                    painterController.redo();
+                  });
+                }
+              },
               icon: const Icon(Icons.redo),
             ),
             IconButton(

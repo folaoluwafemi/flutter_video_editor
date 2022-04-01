@@ -7,6 +7,7 @@ import 'package:flutter_video_editor/features/cloud_storage_feature/presentation
 import 'package:flutter_video_editor/features/video_stream_feature/bloc/video_stream_cubit.dart';
 import 'package:flutter_video_editor/features/video_stream_feature/presentation/video_stream_screen.dart';
 import 'package:flutter_video_editor/features/annotate_frame_feature/presentation/paint_screen.dart';
+import 'package:flutter_video_editor/utils/splash_screen.dart';
 import 'package:flutter_video_editor/utils/video_model.dart';
 
 class AppRouter {
@@ -25,7 +26,9 @@ class AppRouter {
         ),
       );
     }
-
+    if(settings.name == AppSplashScreen.id){
+      return MaterialPageRoute(builder: (_)=> const AppSplashScreen());
+    }
     if (settings.name == VideoScreen.id) {
       if (settings.arguments == null) {
         return MaterialPageRoute(

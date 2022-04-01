@@ -20,6 +20,7 @@ class _VideosListScreenState extends State<VideosListScreen> {
   @override
   void initState() {
     context.read<CloudStorageCubit>().onScreenInitialized();
+    print('screen Init');
     super.initState();
   }
 

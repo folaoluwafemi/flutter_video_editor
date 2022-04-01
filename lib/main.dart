@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_video_editor/features/cloud_storage_feature/presentation/cloud_storage_screen.dart';
 import 'package:flutter_video_editor/config/app_router.dart';
+import 'package:flutter_video_editor/utils/splash_screen.dart';
 import 'package:flutter_video_editor/utils/theme.dart';
 
 import 'firebase_options.dart';
@@ -26,7 +27,7 @@ class PaintApp extends StatelessWidget {
     return MaterialApp(
       theme: AppTheme.lightThemeData,
       darkTheme: AppTheme.darkThemeData,
-      initialRoute: VideosListScreen.id,
+      initialRoute: AppSplashScreen.id,
       onGenerateRoute: AppRouter.router,
     );
   }

@@ -84,91 +84,95 @@ class _VideoScreenState extends State<VideoScreen> {
                 }),
           ),
           body: Container(
-            alignment: Alignment.center,
-            child: Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      AspectRatio(
-                        aspectRatio: videoController.value.aspectRatio,
-                        child: Stack(
-                          children: [
-                            Screenshot(
-                              controller: screenshotController,
-                              child: VideoPlayer(videoController),
-                            ),
-                            Container(
-                              alignment: Alignment.center,
-                              child: Center(
-                                child: RawMaterialButton(
-                                  shape: const CircleBorder(),
-                                  elevation: 0,
-                                  fillColor: Colors.transparent,
-                                  onPressed: () {
-                                    if (videoController.value.isPlaying) {
-                                      videoController.pause();
-                                      setState(() {});
-                                      context
-                                          .read<VideoStreamCubit>()
-                                          .pause(videoController);
-                                      return;
-                                    }
-                                    videoController.play();
+              alignment: Alignment.center,
+              child: SingleChildScrollView(
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    AspectRatio(
+                      aspectRatio: videoController.value.aspectRatio,
+                      child: Stack(
+                        children: [
+                          Screenshot(
+                            controller: screenshotController,
+                            child: VideoPlayer(videoController),
+                          ),
+                          Container(
+                            alignment: Alignment.center,
+                            child: Center(
+                              child: RawMaterialButton(
+                                shape: const CircleBorder(),
+                                elevation: 0,
+                                fillColor: Colors.transparent,
+                                onPressed: () {
+                                  if (videoController.value.isPlaying) {
+                                    videoController.pause();
                                     setState(() {});
                                     context
                                         .read<VideoStreamCubit>()
-                                        .play(videoController);
-                                  },
-                                  child: Icon(
-                                    (videoController.value.isPlaying)
-                                        ? Icons.pause
-                                        : Icons.play_arrow,
-                                    size: 70,
-                                    color: Colors.white,
-                                  ),
+                                        .pause(videoController);
+                                    return;
+                                  }
+                                  videoController.play();
+                                  setState(() {});
+                                  context
+                                      .read<VideoStreamCubit>()
+                                      .play(videoController);
+                                },
+                                child: Icon(
+                                  (videoController.value.isPlaying)
+                                      ? Icons.pause
+                                      : Icons.play_arrow,
+                                  size: 70,
+                                  color: Colors.white,
                                 ),
                               ),
                             ),
-                          ],
-                        ),
-                      ),
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          AspectRatio(
-                            aspectRatio: videoController.value.aspectRatio,
                           ),
-                          ValueListenableBuilder<VideoPlayerValue>(
-                              valueListenable: videoController,
-                              builder: (context, value, _) {
-                                return Container(
-                                  width: constraints.maxWidth,
-                                  color: Theme.of(context).backgroundColor,
-                                  height: 20,
-                                  child: Row(
-                                    children: [
-                                      Expanded(
-                                        child: Slider(
-                                          value: value.position.inSeconds /
-                                              value.duration.inSeconds,
-                                          onChanged: (value) {},
-                                        ),
+                        ],
+                      ),
+                    ),
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        AspectRatio(
+                          aspectRatio: videoController.value.aspectRatio,
+                        ),
+                        ValueListenableBuilder<VideoPlayerValue>(
+                            valueListenable: videoController,
+                            builder: (context, value, _) {
+                              return Container(
+                                width: constraints.maxWidth,
+                                color: Theme.of(context).backgroundColor,
+                                height: 20,
+                                child: Row(
+                                  children: [
+                                    Expanded(
+                                      child: Slider(
+                                        value: value.position.inSeconds /
+                                            value.duration.inSeconds,
+                                        onChanged: (value) {},
                                       ),
-                                      Text(
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.only(right: 7.0),
+                                      child: Text(
                                         '${value.position.inMinutes.toString()}:${(value.position.inSeconds % 60).toString()}',
                                         style: const TextStyle(
                                           color: Colors.white,
                                           fontSize: 10,
                                         ),
                                       ),
-                                    ],
-                                  ),
-                                );
-                              }),
-                        ],
-                      ),
-                    ],
-                  )
-          ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            }),
+                      ],
+                    ),
+                  ],
+                ),
+              )),
         ),
       );
     });
