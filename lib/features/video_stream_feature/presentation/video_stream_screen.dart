@@ -27,13 +27,13 @@ class _VideoScreenState extends State<VideoScreen> {
   late VideoPlayerController videoController;
   late ScreenshotController screenshotController;
   late Uint8List image;
+  double position = 0.0;
 
   @override
   void initState() {
     screenshotController = ScreenshotController();
     videoController = BlocProvider.of<VideoStreamCubit>(context)
         .initializeController(video: widget.video);
-
     super.initState();
   }
 
@@ -48,67 +48,128 @@ class _VideoScreenState extends State<VideoScreen> {
   @override
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
-
-    return SafeArea(
-      child: Scaffold(
-        appBar: PreferredSize(
-          preferredSize: Size(double.infinity, 50),
-          child: AppBar(
-            automaticallyImplyLeading: false,
-            actions: [
-              IconButton(
-                onPressed: () async {
-                  image = (await screenshotController.capture())!;
-                  Future.delayed(const Duration(milliseconds: 300))
-                      .then((value) {
-                    Navigator.of(context)
-                        .pushNamed(PaintDrawer.id, arguments: image);
-                  });
-                },
-                icon: const Icon(
-                  Icons.add,
-                ),
-              ),
-            ],
-          ),
-        ),
-        backgroundColor: Colors.grey,
-        body: Center(
-          child: Container(
-            color: Colors.transparent,
-            child: AspectRatio(
-              aspectRatio: videoController.value.aspectRatio,
-              child: Stack(
-                alignment: Alignment.center,
-                children: [
-                  Screenshot(
-                    controller: screenshotController,
-                    child: VideoPlayer(videoController),
-                  ),
-                  Container(
-                    alignment: Alignment.center,
-                    child: Center(
-                      child: RawMaterialButton(
-                        fillColor: Colors.grey.withOpacity(0.3),
-                        onPressed: () {
-                          if (videoController.value.isPlaying) {
-                            videoController.pause();
-                            context.read<VideoStreamCubit>().pause();
-                            return;
-                          }
-                          videoController.play();
-                          context.read<VideoStreamCubit>().play();
+    return LayoutBuilder(builder: (context, constraints) {
+      videoController.setLooping(true);
+      return SafeArea(
+        child: Scaffold(
+          appBar: PreferredSize(
+            preferredSize: Size(constraints.maxWidth, 50),
+            child: ValueListenableBuilder<VideoPlayerValue>(
+              valueListenable: videoController,
+              builder: (context, value, _) {
+                return AppBar(
+                  automaticallyImplyLeading: false,
+                  actions: [
+                    Visibility(
+                      visible: !value.isPlaying,
+                      child: IconButton(
+                        onPressed: () async {
+                          image = (await screenshotController.capture())!;
+                          Future.delayed(const Duration(milliseconds: 300))
+                              .then((value) {
+                            Navigator.of(context)
+                                .pushNamed(PaintDrawer.id, arguments: image);
+                          });
                         },
-                        child: const Text('this button'),
+                        icon: const Icon(
+                          Icons.camera,
+                        ),
                       ),
                     ),
+                  ],
+                );
+              }
+            ),
+          ),
+          body: Container(
+            alignment: Alignment.center,
+            color: Colors.transparent,
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                AspectRatio(
+                  aspectRatio: videoController.value.aspectRatio,
+                  child: Stack(
+                    children: [
+                      Screenshot(
+                        controller: screenshotController,
+                        child: VideoPlayer(videoController),
+                      ),
+                      Container(
+                        alignment: Alignment.center,
+                        child: Center(
+                          child: RawMaterialButton(
+                            shape: const CircleBorder(),
+                            elevation: 0,
+                            fillColor: Colors.transparent,
+                            onPressed: () {
+                              if (videoController.value.isPlaying) {
+                                videoController.pause();
+                                setState(() {});
+                                context
+                                    .read<VideoStreamCubit>()
+                                    .pause(videoController);
+                                return;
+                              }
+                              videoController.play();
+                              setState(() {});
+                              context
+                                  .read<VideoStreamCubit>()
+                                  .play(videoController);
+                            },
+                            child: Icon(
+                              (videoController.value.isPlaying)
+                                  ? Icons.pause
+                                  : Icons.play_arrow,
+                              size: 70,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                ],
-              ),
+                ),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    AspectRatio(
+                      aspectRatio: videoController.value.aspectRatio,
+                    ),
+                    ValueListenableBuilder<VideoPlayerValue>(
+                        valueListenable: videoController,
+                        builder: (context, value, _) {
+                          return Container(
+                            width: constraints.maxWidth,
+                            color: Theme.of(context).backgroundColor,
+                            height: 20,
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: Slider(
+                                    value: value.position.inSeconds /
+                                        value.duration.inSeconds,
+                                    onChanged: (value) {},
+                                  ),
+                                ),
+                                Text(
+                                  '${value.position.inMinutes.toString()}:${(value.position.inSeconds % 60).toString()}',
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 10,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        }),
+                  ],
+                ),
+              ],
             ),
           ),
         ),
-      ),
-    );
+      );
+    });
   }
 }

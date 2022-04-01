@@ -4,13 +4,14 @@ import 'package:flutter_video_editor/utils/video_model.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:video_player/video_player.dart';
 
-class VideoStreamState extends Equatable {
+abstract class VideoStreamState extends Equatable {
+  final double? position;
   final bool isPlaying;
 
-  const VideoStreamState({required this.isPlaying});
+  const VideoStreamState({required this.isPlaying, this.position});
 
   @override
-  List<Object?> get props => [isPlaying];
+  List<Object?> get props => [isPlaying, position];
 }
 
 class InitialVideoStreamState extends VideoStreamState {
@@ -18,11 +19,13 @@ class InitialVideoStreamState extends VideoStreamState {
 }
 
 class VideoPausedState extends VideoStreamState {
-  const VideoPausedState() : super(isPlaying: false);
+  const VideoPausedState({required double position})
+      : super(isPlaying: false, position: position);
 }
 
 class VideoPlayingState extends VideoStreamState {
-  const VideoPlayingState() : super(isPlaying: true);
+  const VideoPlayingState({required double position})
+      : super(isPlaying: true, position: position);
 }
 
 class VideoStreamCubit extends Cubit<VideoStreamState> {
@@ -39,11 +42,31 @@ class VideoStreamCubit extends Cubit<VideoStreamState> {
     return controller;
   }
 
-  void pause() {
-    emit(const VideoPausedState());
+
+  void setPosition(double position){
+    emit(VideoPlayingState(position: position));
   }
 
-  void play() {
-    emit(const VideoPlayingState());
+  double getCurrentPosition(VideoPlayerController videoController) {
+    var newPosition = videoController.value.position.inSeconds /
+        videoController.value.duration.inSeconds;
+    emit(VideoPlayingState(position: newPosition));
+    return newPosition;
+  }
+
+  void pause(VideoPlayerController controller) {
+    double position = getCurrentPosition(controller);
+
+    emit(VideoPausedState(position: position));
+  }
+
+  void jumpTo(VideoPlayerController controller) {
+    double position = getCurrentPosition(controller);
+    emit(VideoPlayingState(position: position));
+  }
+
+  void play(VideoPlayerController controller) {
+    double position = getCurrentPosition(controller);
+    emit(VideoPlayingState(position: position));
   }
 }

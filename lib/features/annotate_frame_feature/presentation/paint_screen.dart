@@ -69,44 +69,6 @@ class _PaintDrawerState extends State<PaintDrawer> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      // appBar: PreferredSize(
-      //   preferredSize: const Size(double.infinity, 50),
-      //   child: ValueListenableBuilder<PainterControllerValue>(
-      //     valueListenable: painterController,
-      //     builder: (valueListenableContext, value, child) {
-      //       return AppBar(
-      //         //automaticallyImplyLeading: false,
-      //         shadowColor: Colors.transparent,
-      //         backgroundColor: Colors.grey.shade700,
-      //         leading: null,
-      //         actions: [
-      //           IconButton(
-      //             onPressed: () {
-      //               // (painterController.selectedObjectDrawable == null)
-      //               //     ? null
-      //               painterController.undo();
-      //             },
-      //             icon: const Icon(Icons.undo),
-      //           ),
-      //           IconButton(
-      //             onPressed: () => (painterController.canRedo)
-      //                 ? painterController.redo()
-      //                 : null,
-      //             icon: const Icon(Icons.redo),
-      //           ),
-      //           IconButton(
-      //             onPressed: () {},
-      //             icon: const Icon(Icons.edit),
-      //           ),
-      //           IconButton(
-      //             onPressed: () {},
-      //             icon: const Icon(Icons.save),
-      //           ),
-      //         ],
-      //       );
-      //     },
-      //   ),
-      // ),
       child: Stack(
         children: [
           Container(
@@ -124,24 +86,4 @@ class _PaintDrawerState extends State<PaintDrawer> {
       ),
     );
   }
-//
-// Future<dynamic> saveImage(Uint8List image) async {
-//   await Permission.storage.request();
-//   String time = DateTime.now().toIso8601String().replaceAll('-', '.');
-//
-//   String imageName = 'screenshot:$time';
-//
-//   Map<String, dynamic> imageSaveResult =
-//       await ImageGallerySaver.saveImage(image, name: imageName);
-//
-//   return imageSaveResult;
-// }
-//
-// void savedImageSnackBar(BuildContext snackBarContext) {
-//   ScaffoldMessenger.of(snackBarContext).showSnackBar(
-//     const SnackBar(
-//       content: Text('Image has been saved'),
-//     ),
-//   );
-// }
 }
